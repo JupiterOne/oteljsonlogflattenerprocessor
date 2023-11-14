@@ -1,0 +1,13 @@
+name: Release
+
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  release:
+    uses: jupiterone/.github/.github/workflows/provision_only_release.yml@v3
+    secrets:
+      NPM_TOKEN: ${{ secrets.NPM_AUTH_TOKEN }}
+      AUTO_GITHUB_PAT_TOKEN: ${{ secrets.AUTO_GITHUB_PAT_TOKEN }}
