@@ -41,10 +41,10 @@ receivers:
 exporters:
   ...
 processors:
-  - oteljsonlogflattenerprocessor
+  - jsonlogflattener
 pipelines:
   logs:
     receivers: [...]
-    processors: [oteljsonlogflattenerprocessor]
+    processors: [jsonlogflattener]
     exporters: [...]
 ```
