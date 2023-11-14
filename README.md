@@ -31,7 +31,7 @@ To add this processor to your OpenTelemetry Collector, follow the instructions f
 In your config, add the following:
 ```yaml
 processors:
-  - github.com/JupiterOne/otel-jsonlogflattenerprocessor latest
+  - github.com/jupiterone/oteljsonlogflattenerprocessor latest
 ```
 
 In your collector config, add the following processor:
