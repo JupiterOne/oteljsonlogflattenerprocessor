@@ -1,0 +1,9 @@
+type: jsonlogflattener
+
+status:
+  class: processor
+  stability:
+    alpha: [logs]
+  distributions: []
+  codeowners:
+    active: ["@JupiterOne/sre"]
