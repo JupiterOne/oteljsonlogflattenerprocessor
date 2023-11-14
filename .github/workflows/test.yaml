@@ -15,4 +15,4 @@ jobs:
       - name: Install dependencies
         run: go get .
       - name: Run tests
-        run: go test -v ./...
+        run: go test -v ./... -bench=.

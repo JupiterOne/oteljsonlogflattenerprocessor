@@ -22,23 +22,7 @@ func TestFlatten(t *testing.T) {
 	err = jlfp.Start(context.Background(), nil)
 	require.NoError(t, err)
 
-	ld := plog.NewLogs()
-	ld.ResourceLogs().AppendEmpty()
-	scope := ld.ResourceLogs().At(0).ScopeLogs().AppendEmpty()
-	log := scope.LogRecords().AppendEmpty()
-
-	log.Attributes().PutStr("foo-string", "bar")
-	log.Attributes().PutDouble("foo-double", 1.0)
-	log.Attributes().PutInt("foo-int", 1)
-	log.Attributes().PutBool("foo-bool", true)
-	inputFooMap := log.Attributes().PutEmptyMap("foo-map")
-	inputFooMap.PutStr("foo-map-string", "bar")
-	inputFooMap.PutDouble("foo-map-double", 1.0)
-	inputFooMap.PutInt("foo-map-int", 1)
-	inputFooMap.PutBool("foo-map-bool", true)
-	inputFooSlice := log.Attributes().PutEmptySlice("foo-slice")
-	inputFooSlice.AppendEmpty().SetInt(1)
-	inputFooSlice.AppendEmpty().SetInt(2)
+	ld := buildLogs(1)
 
 	err = jlfp.ConsumeLogs(context.Background(), ld)
 	require.NoError(t, err)
@@ -67,4 +51,57 @@ func TestFlatten(t *testing.T) {
 	require.True(t, exists)
 	require.Equal(t, fooSlice.Type(), pcommon.ValueTypeStr)
 	require.Equal(t, fooSlice.Str(), `[1,2]`)
+}
+
+func BenchmarkFlatten10(b *testing.B) {
+	factory := NewFactory()
+	tln := new(consumertest.LogsSink)
+	jlfp, _ := factory.CreateLogsProcessor(context.Background(), processortest.NewNopCreateSettings(), &Config{}, tln)
+	ld := buildLogs(10)
+	for n := 0; n < b.N; n++ {
+		jlfp.ConsumeLogs(context.Background(), ld)
+	}
+}
+
+func BenchmarkFlatten500(b *testing.B) {
+	factory := NewFactory()
+	tln := new(consumertest.LogsSink)
+	jlfp, _ := factory.CreateLogsProcessor(context.Background(), processortest.NewNopCreateSettings(), &Config{}, tln)
+	ld := buildLogs(500)
+	for n := 0; n < b.N; n++ {
+		jlfp.ConsumeLogs(context.Background(), ld)
+	}
+}
+
+func BenchmarkFlatten1000(b *testing.B) {
+	factory := NewFactory()
+	tln := new(consumertest.LogsSink)
+	jlfp, _ := factory.CreateLogsProcessor(context.Background(), processortest.NewNopCreateSettings(), &Config{}, tln)
+	ld := buildLogs(1000)
+	for n := 0; n < b.N; n++ {
+		jlfp.ConsumeLogs(context.Background(), ld)
+	}
+}
+
+func buildLogs(count int) plog.Logs {
+	ld := plog.NewLogs()
+	for i := 0; i < count; i++ {
+		ld.ResourceLogs().AppendEmpty()
+		scope := ld.ResourceLogs().At(i).ScopeLogs().AppendEmpty()
+		log := scope.LogRecords().AppendEmpty()
+
+		log.Attributes().PutStr("foo-string", "bar")
+		log.Attributes().PutDouble("foo-double", 1.0)
+		log.Attributes().PutInt("foo-int", 1)
+		log.Attributes().PutBool("foo-bool", true)
+		inputFooMap := log.Attributes().PutEmptyMap("foo-map")
+		inputFooMap.PutStr("foo-map-string", "bar")
+		inputFooMap.PutDouble("foo-map-double", 1.0)
+		inputFooMap.PutInt("foo-map-int", 1)
+		inputFooMap.PutBool("foo-map-bool", true)
+		inputFooSlice := log.Attributes().PutEmptySlice("foo-slice")
+		inputFooSlice.AppendEmpty().SetInt(1)
+		inputFooSlice.AppendEmpty().SetInt(2)
+	}
+	return ld
 }
