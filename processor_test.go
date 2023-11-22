@@ -30,7 +30,7 @@ func TestFlatten(t *testing.T) {
 	logs := tln.AllLogs()
 	require.Len(t, logs, 1)
 	attrs := logs[0].ResourceLogs().At(0).ScopeLogs().At(0).LogRecords().At(0).Attributes()
-	require.Equal(t, attrs.Len(), 6)
+	require.Equal(t, attrs.Len(), 7)
 	fooString, exists := attrs.Get("foo-string")
 	require.True(t, exists)
 	require.Equal(t, fooString.Str(), "bar")
@@ -94,6 +94,8 @@ func buildLogs(count int) plog.Logs {
 		log.Attributes().PutDouble("foo-double", 1.0)
 		log.Attributes().PutInt("foo-int", 1)
 		log.Attributes().PutBool("foo-bool", true)
+		// Add an empty key to make sure empty attributes don't cause a panic
+		log.Attributes().PutEmpty("test")
 		inputFooMap := log.Attributes().PutEmptyMap("foo-map")
 		inputFooMap.PutStr("foo-map-string", "bar")
 		inputFooMap.PutDouble("foo-map-double", 1.0)
