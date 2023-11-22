@@ -54,7 +54,7 @@ func (jlp *jsonlogflattenerProcessor) flatten(ld *plog.Logs) error {
 		for j := 0; j < ld.ResourceLogs().At(i).ScopeLogs().Len(); j++ {
 			for k := 0; k < ld.ResourceLogs().At(i).ScopeLogs().At(j).LogRecords().Len(); k++ {
 				for l, m := range ld.ResourceLogs().At(i).ScopeLogs().At(j).LogRecords().At(k).Attributes().AsRaw() {
-					if reflect.TypeOf(m).Kind() == reflect.Map || reflect.TypeOf(m).Kind() == reflect.Slice {
+					if m != nil && (reflect.TypeOf(m).Kind() == reflect.Map || reflect.TypeOf(m).Kind() == reflect.Slice) {
 						payload, err := json.Marshal(m)
 						if err != nil {
 							jlp.logger.Error(err.Error())
