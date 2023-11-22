@@ -49,6 +49,13 @@ func (jlp *jsonlogflattenerProcessor) Shutdown(context.Context) error {
 }
 
 func (jlp *jsonlogflattenerProcessor) flatten(ld *plog.Logs) error {
+	defer func() {
+		// if we paniced for some reason, recover from the panic and log
+		// the error message so we don't break the collector workflow
+		if r := recover(); r != nil {
+			jlp.logger.Error(r.(error).Error())
+		}
+	}()
 	var rootErr error
 	for i := 0; i < ld.ResourceLogs().Len(); i++ {
 		for j := 0; j < ld.ResourceLogs().At(i).ScopeLogs().Len(); j++ {
