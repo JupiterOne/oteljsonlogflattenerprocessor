@@ -1,3 +1,7 @@
+# ARCHIVED
+This processor is no longer needed as the ottl library added a flatten function that does this and we have implemented this.
+https://github.com/open-telemetry/opentelemetry-collector-contrib/blob/main/pkg/ottl/README.md
+
 # OpenTelemetry JSON Log Flattener 
 NewRelic doesn't support nested JSON attributes in OpenTelemetry logs. To help alleviate these issues, this processor will flatten JSON at the top level. It turns messages like this:
 ```json
